@@ -1,9 +1,40 @@
 import React from 'react';
-import { Avatar, Divider, Drawer, Icon, List, ListItemButton, ListItemIcon, ListItemText, useMediaQuery, useTheme } from '@mui/material';
+import { Avatar, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText, useMediaQuery, useTheme } from '@mui/material';
 import { Box } from '@mui/system';
 // import Home from '@mui/icons-material/Home';
-import Home from '@mui/icons-material/Home';
+import Icon from '@mui/material/Icon';
 import { useAppDrawerContext } from '../../contexts';
+import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
+
+interface IListItemLinkProps {
+  to:string,
+  icon:string,
+  label:string,
+  onClick: (() => void) | undefined;
+
+}
+
+export const ListItemLink : React.FC<IListItemLinkProps> = ({to, icon, label, onClick}) => {
+  const navigate = useNavigate();
+
+  const resolverPath = useResolvedPath(to);
+  const match = useMatch({path:resolverPath.pathname, end:false});
+
+  const handleClick = () => {
+    navigate(to);
+    onClick?.();
+  };
+
+  return (
+    <ListItemButton selected={!!match} onClick={handleClick}>
+      <ListItemIcon>
+        <Icon>{icon}</Icon>
+        {/* <InboxIcon /> */}
+      </ListItemIcon>
+      <ListItemText primary={label}></ListItemText>
+    </ListItemButton>
+  );
+};
 
 interface IDrawerProps {
   children:React.ReactNode
@@ -27,13 +58,8 @@ export const MenuLateral:React.FC<IDrawerProps> = ({children}) => {
 
           <Box flex={1}>
             <List component="nav">
-              <ListItemButton>
-                <ListItemIcon>
-                  <Home color='primary'/>
-                  {/* <InboxIcon /> */}
-                </ListItemIcon>
-                <ListItemText primary='inbox'></ListItemText>
-              </ListItemButton>
+              <ListItemLink  to='/pagina-inicial' icon='home' label='Página incial' onClick={smDown ? toggleDrawerOpen : undefined}/>
+              <ListItemLink  to='/favoritos' icon='stars' label='Favoritos' onClick={smDown ? toggleDrawerOpen : undefined}/>
             </List>
           </Box>
         </Box>
